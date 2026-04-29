@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Musical - Edición Gala SEA 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #ff5e57;
+            --accent: #ffc107;
+            --bg: #f0f4f8;
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+
+        body {
+            background: linear-gradient(45deg, #a1c4fd, #c2e9fb, #d4fc79, #96e6a1);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- CABECERA --- */
+        header {
+            width: 100%;
+            background: white;
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--primary);
+            z-index: 10;
+        }
+
+        .header-container {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img { height: 90px; transition: transform 0.3s; }
+        .logo-img:hover { transform: rotate(5deg) scale(1.1); }
+
+        /* --- ANIMACIÓN DEL TÍTULO --- */
+        .block-title {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .b-letter {
+            width: 42px; height: 42px;
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka One';
+            font-size: 26px;
+            border-radius: 8px;
+            box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1);
+            animation: jump 2s infinite ease-in-out;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+
+        @keyframes jump {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* --- CONTENEDOR DE JUEGO --- */
+        #game-master {
+            display: flex;
+            gap: 25px;
+            margin: 25px auto;
+            padding: 25px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            border: 4px solid white;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        /* --- EFECTO FLASH AL LIMPIAR LÍNEAS --- */
+        #canvas-board {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            border: 8px solid #eee;
+            transition: all 0.1s;
+        }
+
+        .flash-active {
+            animation: flashEffect 0.4s;
+        }
+
+        @keyframes flashEffect {
+            0% { background: white; border-color: #eee; }
+            50% { background: #fff9db; border-color: var(--accent); transform: scale(1.02); }
+            100% { background: white; border-color: #eee; }
+        }
+
+        /* --- WIDGETS --- */
+        .side-panel { width: 220px; display: flex; flex-direction: column; gap: 20px; }
+        .widget {
+            background: white;
+            padding: 15px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-bottom: 5px solid #e0e0e0;
+        }
+        .widget h3 { margin: 0; font-family: 'Fredoka One'; color: #7a8ba3; font-size: 0.9rem; }
+        .val { font-size: 2.2rem; font-weight: 900; color: var(--primary); }
+
+        /* Botón de Inicio */
+        .btn-play {
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+            border: none;
+            width: 170px; height: 170px;
+            border-radius: 50%;
+            font-family: 'Fredoka One';
+            font-size: 24px;
+            color: #444;
+            cursor: pointer;
+            box-shadow: 0 12px 0 #d4a017, 0 15px 30px rgba(0,0,0,0.2);
+            animation: pulsePlay 1.5s infinite;
+        }
+
+        @keyframes pulsePlay {
+            0% { transform: scale(1); box-shadow: 0 12px 0 #d4a017, 0 15px 30px rgba(0,0,0,0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 0 #d4a017, 0 20px 40px rgba(0,0,0,0.3); }
+            100% { transform: scale(1); box-shadow: 0 12px 0 #d4a017, 0 15px 30px rgba(0,0,0,0.2); }
+        }
+
+        #g-icon { font-size: 4.5rem; transition: transform 0.5s; }
+        .icon-bounce { animation: iconJump 0.5s; }
+        @keyframes iconJump {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(15deg); }
+        }
+
+        footer { font-weight: bold; color: #5a6a82; padding: 15px; text-shadow: 1px 1px 0 white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <img src="logo2.jpg" class="logo-img" alt="Escuela">
+        <div class="title-container">
+            <div class="block-title" id="mainTitle"></div>
+            <div style="font-family: 'Fredoka One'; color: var(--secondary); letter-spacing: 1px;">SEMANA DE LA EDUCACIÓN ARTÍSTICA 2026</div>
+        </div>
+        <img src="logo_header.jpg" class="logo-img" alt="SEA">
+    </div>
+</header>
+
+<div id="game-master">
+    <div class="side-panel">
+        <div class="widget">
+            <h3>PRÓXIMA NOTA</h3>
+            <canvas id="next" width="100" height="100"></canvas>
+        </div>
+        <div class="widget" style="background: #fff9db; border-color: #ffcc00;">
+            <h3>DICCIONARIO</h3>
+            <div id="g-icon">♪</div>
+            <div id="g-name" style="font-family:'Fredoka One';">Corchea</div>
+            <p id="g-desc" style="font-size: 0.85rem; font-weight: bold; color: #666;">¡Salta como un latido!</p>
+        </div>
+    </div>
+
+    <div id="canvas-board">
+        <div id="start-screen" class="overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:15px;">
+            <button class="btn-play" onclick="initGame()">¡TOCAR!<br>🎵</button>
+            <p style="margin-top:20px; font-weight:900; color:var(--primary);">USA LAS FLECHAS PARA MOVER</p>
+        </div>
+
+        <div id="game-over" class="overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:101; display:none; flex-direction:column; align-items:center; justify-content:center; border-radius:15px;">
+            <h2 style="font-family:'Fredoka One'; color:var(--secondary); font-size:2.2rem;">¡FIN DE LA OBRA!</h2>
+            <div class="val" id="final-score">0</div>
+            <p style="font-weight:bold;">¡Lo hiciste increíble!</p>
+            <button class="btn-play" style="width:130px; height:130px; font-size:18px;" onclick="initGame()">OTRA VEZ</button>
+        </div>
+
+        <canvas id="tetris" width="300" height="600"></canvas>
+    </div>
+
+    <div class="side-panel">
+        <div class="widget">
+            <h3>PUNTAJE</h3>
+            <div id="score" class="val">0</div>
+        </div>
+        <div class="widget">
+            <h3>RITMO</h3>
+            <div id="tempo-label" class="val" style="font-size: 1.4rem;">Lento</div>
+        </div>
+        <div class="widget" style="border-color: #2ecc71;">
+            <h3>MEJOR MARCA</h3>
+            <div id="high-score" class="val" style="color: #2ecc71;">0</div>
+        </div>
+    </div>
+</div>
+
+<footer>ESCUELA SANTA EUGENIA - CHIMBARONGO</footer>
+
+<script>
+    // --- AUDIO ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playNote(freq, type = 'triangle', duration = 0.15) {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // --- TÍTULO CON RETRASO DE ANIMACIÓN ---
+    const titleText = "TETRISMUSICAL";
+    const colors = [null, '#FF0D72', '#0DC2FF', '#0DFF72', '#F538FF', '#FF8E0D', '#FFE138', '#3877FF'];
+    const titleDiv = document.getElementById('mainTitle');
+    
+    titleText.split('').forEach((char, i) => {
+        const span = document.createElement('div');
+        span.className = 'b-letter';
+        span.innerText = char;
+        span.style.backgroundColor = colors[(i % 7) + 1];
+        span.style.animationDelay = `${i * 0.1}s`; // Efecto de ola
+        titleDiv.appendChild(span);
+    });
+
+    // --- JUEGO ---
+    const canvas = document.getElementById('tetris');
+    const context = canvas.getContext('2d');
+    const nextCanvas = document.getElementById('next');
+    const nCtx = nextCanvas.getContext('2d');
+
+    context.scale(30, 30);
+    nCtx.scale(25, 25);
+
+    const symbols = [null, '♪', '♫', '♩', '♬', '♭', '♮', '♯'];
+    const glossary = {
+        1: { name: 'Corchea', desc: 'Dura medio tiempo. ¡Muy saltarina!' },
+        2: { name: 'Doble Corchea', desc: 'Dos notas rápidas juntas.' },
+        3: { name: 'Negra', desc: 'El pulso básico de la música.' },
+        4: { name: 'Semicorcheas', desc: 'Cuatro notas muy veloces.' },
+        5: { name: 'Bemol', desc: 'Baja un poquito el sonido.' },
+        6: { name: 'Becuadro', desc: 'Borra las alteraciones.' },
+        7: { name: 'Sostenido', desc: 'Sube un poquito el sonido.' }
+    };
+
+    function createPiece(t) {
+        if (t === 'I') return [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]];
+        if (t === 'L') return [[0, 2, 0], [0, 2, 0], [0, 2, 2]];
+        if (t === 'J') return [[0, 3, 0], [0, 3, 0], [3, 3, 0]];
+        if (t === 'O') return [[4, 4], [4, 4]];
+        if (t === 'Z') return [[5, 5, 0], [0, 5, 5], [0, 0, 0]];
+        if (t === 'S') return [[0, 6, 6], [6, 6, 0], [0, 0, 0]];
+        if (t === 'T') return [[0, 7, 0], [7, 7, 7], [0, 0, 0]];
+    }
+
+    function drawMatrix(matrix, offset, ctx) {
+        matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {
+                    ctx.fillStyle = colors[value];
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                    ctx.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                    ctx.shadowBlur = 0;
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = '700 0.7px Nunito';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(symbols[value], x + offset.x + 0.5, y + offset.y + 0.5);
+                }
+            });
+        });
+    }
+
+    function arenaSweep() {
+        let cleared = false;
+        outer: for (let y = arena.length - 1; y > 0; --y) {
+            for (let x = 0; x < arena[y].length; ++x) {
+                if (arena[y][x] === 0) continue outer;
+            }
+            arena.splice(y, 1)[0].fill(0);
+            arena.unshift(new Array(10).fill(0));
+            ++y;
+            player.score += 10;
+            cleared = true;
+        }
+        if(cleared) {
+            const board = document.getElementById('canvas-board');
+            board.classList.add('flash-active');
+            setTimeout(() => board.classList.remove('flash-active'), 400);
+            playNote(880, 'sine', 0.4);
+            updateStats();
+        }
+    }
+
+    function playerDrop() {
+        player.pos.y++;
+        if (collide(arena, player)) {
+            player.pos.y--;
+            merge(arena, player);
+            playerReset();
+            arenaSweep();
+            playNote(200, 'square', 0.1);
+        }
+        dropCounter = 0;
+    }
+
+    function playerRotate() {
+        const pos = player.pos.x;
+        let offset = 1;
+        const m = player.matrix;
+        for (let y = 0; y < m.length; ++y) {
+            for (let x = 0; x < y; ++x) [m[x][y], m[y][x]] = [m[y][x], m[x][y]];
+        }
+        m.forEach(row => row.reverse());
+        while (collide(arena, player)) {
+            player.pos.x += offset;
+            offset = -(offset + (offset > 0 ? 1 : -1));
+            if (offset > m[0].length) { player.pos.x = pos; return; }
+        }
+        playNote(500, 'triangle', 0.1);
+    }
+
+    function collide(a, p) {
+        const [m, o] = [p.matrix, p.pos];
+        for (let y = 0; y < m.length; ++y) {
+            for (let x = 0; x < m[y].length; ++x) {
+                if (m[y][x] !== 0 && (a[y + o.y] && a[y + o.y][x + o.x]) !== 0) return true;
+            }
+        }
+        return false;
+    }
+
+    function merge(a, p) {
+        p.matrix.forEach((row, y) => {
+            row.forEach((v, x) => { if (v !== 0) a[y + p.pos.y][x + p.pos.x] = v; });
+        });
+    }
+
+    let nextPiece = createPiece('ILJOTSZ'[Math.floor(Math.random() * 7)]);
+
+    function playerReset() {
+        player.matrix = nextPiece;
+        nextPiece = createPiece('ILJOTSZ'[Math.floor(Math.random() * 7)]);
+        player.pos.y = 0;
+        player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+        
+        if (collide(arena, player)) {
+            gameRunning = false;
+            document.getElementById('game-over').style.display = 'flex';
+            document.getElementById('final-score').innerText = player.score;
+            if(player.score > highScore) {
+                highScore = player.score;
+                localStorage.setItem('tetrisRecord', highScore);
+                document.getElementById('high-score').innerText = highScore;
+            }
+        }
+        drawNext();
+    }
+
+    function drawNext() {
+        nCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+        drawMatrix(nextPiece, {x: 1, y: 1}, nCtx);
+        
+        const id = nextPiece.flat().find(v => v > 0) || 1;
+        const icon = document.getElementById('g-icon');
+        icon.innerText = symbols[id];
+        icon.style.color = colors[id];
+        icon.classList.add('icon-bounce');
+        setTimeout(() => icon.classList.remove('icon-bounce'), 500);
+        
+        document.getElementById('g-name').innerText = glossary[id].name;
+        document.getElementById('g-desc').innerText = glossary[id].desc;
+    }
+
+    let dropCounter = 0, dropInterval = 1000, lastTime = 0, gameRunning = false;
+    let highScore = localStorage.getItem('tetrisRecord') || 0;
+    document.getElementById('high-score').innerText = highScore;
+
+    function update(time = 0) {
+        if(!gameRunning) return;
+        const deltaTime = time - lastTime;
+        lastTime = time;
+        dropCounter += deltaTime;
+        if (dropCounter > dropInterval) playerDrop();
+        
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        drawMatrix(arena, {x: 0, y: 0}, context);
+        drawMatrix(player.matrix, player.pos, context);
+        
+        requestAnimationFrame(update);
+    }
+
+    function updateStats() {
+        document.getElementById('score').innerText = player.score;
+        dropInterval = Math.max(150, 1000 - (player.score * 5));
+        const names = ["Adagio", "Andante", "Moderato", "Allegro", "Presto", "Vivace"];
+        document.getElementById('tempo-label').innerText = names[Math.min(5, Math.floor(player.score/100))];
+    }
+
+    const arena = Array.from({length: 20}, () => Array(10).fill(0));
+    const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
+
+    function initGame() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game-over').style.display = 'none';
+        arena.forEach(row => row.fill(0));
+        player.score = 0;
+        updateStats();
+        playerReset();
+        gameRunning = true;
+        lastTime = performance.now();
+        update();
+    }
+
+    window.addEventListener('keydown', e => {
+        if(!gameRunning) return;
+        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) e.preventDefault();
+        if (e.key === 'ArrowLeft') { player.pos.x--; if(collide(arena, player)) player.pos.x++; else playNote(400); }
+        if (e.key === 'ArrowRight') { player.pos.x++; if(collide(arena, player)) player.pos.x--; else playNote(400); }
+        if (e.key === 'ArrowDown') playerDrop();
+        if (e.key === 'ArrowUp') playerRotate();
+    });
+</script>
+
+</body>
+</html>
