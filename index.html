@@ -41,6 +41,8 @@
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
+            /* Evita scroll accidental en móviles al arrastrar piezas */
+            touch-action: none;
         }
 
         @keyframes gradientBG {
@@ -233,6 +235,40 @@
         .stat-group .label { font-weight: bold; font-size: 1.2rem; color: var(--text-light); }
         .stat-group .val { color: var(--high-score); font-size: 3rem; font-family: var(--nunito); }
 
+        /* --- CONTROLES TÁCTILES --- */
+        .touch-controls {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .t-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            border-bottom: 5px solid var(--primary);
+            border-radius: 15px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .t-btn:active {
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+            background: #f0f7ff;
+        }
+
+        .t-btn.btn-rotate { background: var(--accent); border-color: #d4a017; color: white; }
+
         .app-footer {
             width: 100%;
             padding: 20px 0;
@@ -248,22 +284,21 @@
 
         /* --- RESPONSIVE PRO --- */
         @media (max-width: 900px) {
-            #game-master { flex-direction: column; align-items: center; }
+            #game-master { flex-direction: column; align-items: center; padding: 15px; }
             .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .widget { width: 150px; }
+            .widget { width: 140px; padding: 10px; }
             .glossary-widget { width: 100%; max-width: 400px; border-top: 5px solid var(--accent); border-left: none; }
+            .controls-widget { display: none; } /* Escondemos instrucciones teclado en móvil */
+            .touch-controls { display: grid; } /* Mostramos botones táctiles */
         }
 
         @media (max-width: 500px) {
             .b-letter { width: 25px; height: 25px; font-size: 16px; }
             .sea-title { font-size: 0.9rem; }
-            canvas#tetris { max-height: 60vh; }
-            .widget { padding: 10px; width: 130px; }
-            .widget h3 { font-size: 0.8rem; }
-            .val { font-size: 1.8rem; }
+            canvas#tetris { max-height: 55vh; }
+            .widget { padding: 8px; width: 120px; }
+            .val { font-size: 1.5rem; }
             .btn-primary { width: 130px; height: 130px; font-size: 18px; }
-            .header-container { flex-direction: column; gap: 10px; }
-            .app-logo { height: 50px; }
         }
     </style>
 </head>
@@ -287,20 +322,20 @@
         
         <aside class="side-panel left-panel">
             <div class="widget">
-                <h3>SIGUIENTE PIEZA</h3>
+                <h3>SIGUIENTE</h3>
                 <canvas id="nextCanvas" width="100" height="100"></canvas>
             </div>
             <div class="widget glossary-widget" id="glossary-card">
                 <div id="glossary-icon"></div>
                 <h3 id="glossary-name">Glosario</h3>
-                <p id="glossary-desc">¡Encuentra y alinea las notas para crear una sinfonía bloque a bloque!</p>
+                <p id="glossary-desc">¡Encuentra las notas!</p>
             </div>
         </aside>
 
         <div id="game-board-container">
             <div id="overlay" class="game-overlay">
                 <button class="btn-primary start-button" onclick="initGame()">INICIAR<br>SINFONÍA</button>
-                <p class="controls-hint">¡Usa las flechas del teclado!</p>
+                <p class="controls-hint">¡Usa las flechas o botones!</p>
             </div>
             <div id="game-over-overlay" class="game-overlay" style="display: none;">
                 <h2 class="game-over-title">¡FIN DEL<br>CONCIERTO!</h2>
@@ -322,34 +357,34 @@
             </div>
             <div class="widget tempo-widget">
                 <h3>TEMPO</h3>
-                <div id="tempo-label" class="val" style="font-size: 1.5rem;">Largo</div>
+                <div id="tempo-label" class="val" style="font-size: 1.2rem;">Largo</div>
             </div>
             <div class="widget" id="high-score-card" style="border-color: var(--high-score);">
-                <h3>MEJOR MARCA</h3>
+                <h3>RÉCORD</h3>
                 <div id="high-score" class="val" style="color: var(--high-score);">0</div>
-            </div>
-            <div class="widget controls-widget">
-                <h3>CONTROLES</h3>
-                <div class="controls-info">
-                    <p><span class="key">← →</span> <span class="action">Mover</span></p>
-                    <p><span class="key">↑</span> <span class="action">Rotar</span></p>
-                    <p><span class="key">↓</span> <span class="action">Bajar Rápido</span></p>
-                    <p><span class="key">P</span> <span class="action">Sonido On/Off</span></p>
-                </div>
             </div>
         </aside>
 
+    </div>
+
+    <!-- BOTONERA TÁCTIL (Solo visible en móviles) -->
+    <div class="touch-controls">
+        <button class="t-btn" id="t-left">←</button>
+        <button class="t-btn btn-rotate" id="t-up">↻</button>
+        <button class="t-btn" id="t-right">→</button>
+        <div></div> <!-- Espacio -->
+        <button class="t-btn" id="t-down">↓</button>
+        <div></div> <!-- Espacio -->
     </div>
 </main>
 
 <footer class="app-footer">
     <div class="footer-content">
-        © 2026 Escuela Santa Eugenia - Chimbarongo - Proyecto de Educación Artística
+        © 2026 Escuela Santa Eugenia - Chimbarongo
     </div>
 </footer>
 
 <script>
-/* --- TETRIS MUSICAL PRO - LÓGICA DE JUEGO --- */
 (() => {
     const config = {
         arena: { width: 10, height: 20, blockSize: 30 },
@@ -424,11 +459,7 @@
             row.forEach((value, x) => {
                 if (value !== 0) {
                     ctx.fillStyle = config.colors[value];
-                    ctx.shadowBlur = 5; 
-                    ctx.shadowColor = 'rgba(0,0,0,0.15)';
                     ctx.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
-                    
-                    ctx.shadowBlur = 0; 
                     ctx.fillStyle = 'white';
                     ctx.font = '700 0.7px "Nunito"'; 
                     ctx.textAlign = 'center';
@@ -473,7 +504,6 @@
             player.score += linesThisTurn * 10;
             updateStats();
             playNote(880, 'sine', 0.4); 
-
             const board = document.getElementById('game-board-container');
             board.classList.add('flash-active');
             setTimeout(() => board.classList.remove('flash-active'), 350);
@@ -506,7 +536,6 @@
             for (let x = 0; x < y; ++x) [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
         }
         matrix.forEach(row => row.reverse());
-        
         while (collide(arena, player)) {
             player.pos.x += offset;
             offset = -(offset + (offset > 0 ? 1 : -1));
@@ -528,7 +557,6 @@
             gameRunning = false;
             document.getElementById('game-over-overlay').style.display = 'flex';
             document.getElementById('final-score').innerText = player.score;
-            
             if (player.score > highScore) {
                 highScore = player.score;
                 localStorage.setItem('tetrisMusicalHighScore', highScore);
@@ -541,15 +569,12 @@
     function drawNextDisplay() {
         nCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
         drawMatrix(nextPiece, {x: 1, y: 1}, nCtx);
-        
         const id = nextPiece.flat().find(v => v > 0) || 1;
         const icon = document.getElementById('glossary-icon');
         icon.innerText = config.symbols[id];
         icon.style.color = config.colors[id];
-        
         icon.classList.add('icon-bounce');
         setTimeout(() => icon.classList.remove('icon-bounce'), 600);
-        
         document.getElementById('glossary-name').innerText = config.glossary[id].name;
         document.getElementById('glossary-desc').innerText = config.glossary[id].desc;
     }
@@ -561,13 +586,11 @@
     function draw() {
         context.fillStyle = '#fff';
         context.fillRect(0, 0, canvas.width, canvas.height);
-        
         context.strokeStyle = '#f1f1f1';
         context.lineWidth = 0.05;
         for(let i=0; i<config.arena.height; i+=2) {
             context.beginPath(); context.moveTo(0, i); context.lineTo(10, i); context.stroke();
         }
-
         drawMatrix(arena, {x: 0, y: 0}, context);
         drawMatrix(player.matrix, player.pos, context);
     }
@@ -607,22 +630,31 @@
         update();
     };
 
+    // Eventos de Teclado
     window.addEventListener('keydown', e => {
         if (gameRunning) {
-            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight", " "].indexOf(e.key) > -1) {
-                e.preventDefault();
-            }
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight", " "].indexOf(e.key) > -1) e.preventDefault();
             if (e.key === 'ArrowLeft') playerMove(-1);
             if (e.key === 'ArrowRight') playerMove(1);
             if (e.key === 'ArrowDown') playerDrop();
             if (e.key === 'ArrowUp') playerRotate();
         }
-        
-        if (e.key.toLowerCase() === 'p') {
-            isSoundOn = !isSoundOn;
-            playNote(isSoundOn ? 660 : 330, 'sine', 0.1); 
-        }
+        if (e.key.toLowerCase() === 'p') isSoundOn = !isSoundOn;
     });
+
+    // --- LOGICA TÁCTIL ---
+    const addTouchEvt = (id, fn) => {
+        const el = document.getElementById(id);
+        el.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if(gameRunning) fn();
+        }, {passive: false});
+    };
+
+    addTouchEvt('t-left', () => playerMove(-1));
+    addTouchEvt('t-right', () => playerMove(1));
+    addTouchEvt('t-up', () => playerRotate());
+    addTouchEvt('t-down', () => playerDrop());
 
     // Pentagrama Animado de Fondo
     const bgCanvas = document.getElementById('bgCanvas');
