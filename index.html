@@ -3,468 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TETRIS MUSICAL Pro - SEA 2026 - Chimbarongo</title>
+    <title>TETRIS MUSICAL - SEA 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- VARIABLES Y RESET PRO --- */
         :root {
             --primary: #4a90e2; 
-            --primary-light: #6baef8;
             --secondary: #ff5e57; 
             --accent: #ffc107; 
-            --high-score: #2ecc71; 
             --text: #2c3e50;
-            --text-light: #7f8c8d;
-            --bg-light: #fafafa;
-            --bg-shadow: rgba(0,0,0,0.06);
-            --glass: rgba(255, 255, 255, 0.85);
-            
+            --glass: rgba(255, 255, 255, 0.9);
             --fredoka: 'Fredoka One', cursive;
             --nunito: 'Nunito', sans-serif;
-            
-            --transition-snug: all 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
 
-        *, *::before, *::after { box-sizing: border-box; }
-        html { font-size: 16px; scroll-behavior: smooth; }
-
         body {
-            background: linear-gradient(45deg, #a1c4fd 0%, #c2e9fb 30%, #d4fc79 60%, #96e6a1 100%);
-            background-size: 400% 400%;
-            animation: gradientBG 20s ease infinite;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
             font-family: var(--nunito);
-            color: var(--text);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            /* Evita scroll accidental en móviles al arrastrar piezas */
-            touch-action: none;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none; /* Bloquea el scroll para que no interfiera con el juego */
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* --- CABECERA ESTILIZADA --- */
         .app-header {
             width: 100%;
             background: white;
             padding: 10px 0;
             display: flex;
             justify-content: center;
-            box-shadow: 0 4px 20px var(--bg-shadow);
-            border-bottom: 5px solid var(--primary);
-            z-index: 20;
-            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 4px solid var(--primary);
         }
 
         .header-container {
-            width: 95%;
-            max-width: 1200px;
+            width: 90%;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .app-logo { height: 70px; border-radius: 8px; box-shadow: 0 2px 5px var(--bg-shadow); transition: transform 0.3s; }
-        .app-logo:hover { transform: rotate(5deg) scale(1.05); }
-
-        .title-container { text-align: center; }
-
-        .block-title {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            margin-bottom: 5px;
-        }
-
-        .b-letter {
-            width: 36px; height: 36px;
-            color: white;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--fredoka);
-            font-size: 22px;
-            border-radius: 6px;
-            box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1);
-            animation: jump 2s infinite ease-in-out;
-        }
-
-        @keyframes jump {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(10deg); }
-        }
-
-        .sea-title {
-            font-family: var(--fredoka);
-            color: var(--secondary);
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* --- ÁREA DE JUEGO PRINCIPAL --- */
-        .app-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            align-items: center;
-            padding: 20px 0;
-            z-index: 10;
-        }
+        .app-logo { height: 45px; border-radius: 5px; }
 
         #game-master {
             display: flex;
-            gap: 20px;
-            margin: auto;
-            padding: 25px;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 15px;
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            border-radius: 35px;
-            border: 3px solid white;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            align-items: flex-start;
-            max-width: 95vw;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
-        .side-panel { width: 220px; display: flex; flex-direction: column; gap: 20px; }
+        .side-panel { display: flex; flex-direction: column; gap: 10px; }
 
         .widget {
             background: white;
-            padding: 20px;
-            border-radius: 20px;
+            padding: 10px;
+            border-radius: 15px;
             text-align: center;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--bg-light);
-            border-bottom: 5px solid #ecf0f1;
+            min-width: 80px;
         }
 
-        .widget h3 { margin: 0 0 10px 0; font-family: var(--fredoka); color: var(--text-light); font-size: 1rem; text-transform: uppercase; }
-        .val { font-size: 2.2rem; font-weight: 900; color: var(--primary); }
+        .widget h3 { margin: 0; font-size: 0.7rem; color: #999; font-family: var(--fredoka); }
+        .val { font-size: 1.4rem; font-weight: 900; color: var(--primary); }
 
-        .glossary-widget { border-left: 8px solid var(--accent); }
-        #glossary-icon { font-size: 4rem; color: var(--primary); margin: 10px 0; transition: transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-        .icon-bounce { animation: iconJump 0.6s; }
-        @keyframes iconJump {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3) rotate(15deg); }
-        }
-        #glossary-name { font-size: 1.3rem; font-weight: 900; color: var(--secondary); margin-bottom: 5px; }
-        #glossary-desc { font-size: 0.9rem; color: var(--text-light); line-height: 1.4; padding: 0 5px; }
-
-        .controls-widget .controls-info { text-align: left; font-size: 0.9rem; line-height: 1.8; color: var(--text-light); }
-        .key { background: #eee; padding: 3px 6px; border-radius: 4px; border: 1px solid #ccc; font-family: monospace; font-weight: bold; color: var(--text); }
-        .action { font-weight: bold; color: var(--primary); }
-
-        /* --- ÁREA DEL TABLERO JUGABLE --- */
         #game-board-container {
             position: relative;
-            background: white;
-            border-radius: 15px;
-            padding: 8px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
-            border: 6px solid #eee;
-            transition: transform 0.1s ease;
-        }
-
-        #canvas-wrapper {
-            position: relative;
-            border-radius: 10px;
-            overflow: hidden;
-            background: var(--bg-light);
+            background: #fff;
+            border-radius: 12px;
+            border: 4px solid #eee;
+            line-height: 0;
         }
 
         canvas#tetris {
-            display: block;
-            max-height: 70vh; 
-            width: auto;
-            object-fit: contain;
+            background: #fafafa;
+            width: 240px; /* Tamaño optimizado para móviles */
+            height: 480px;
         }
 
         .game-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.92);
+            background: rgba(255,255,255,0.85);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 100;
-            border-radius: 10px;
-            text-align: center;
+            border-radius: 8px;
         }
 
-        .flash-active { animation: flashEffect 0.35s; }
-        @keyframes flashEffect {
-            0% { background: white; border-color: #eee; }
-            50% { background: #fff9db; border-color: var(--accent); transform: scale(1.02); }
-            100% { background: white; border-color: #eee; }
-        }
-
-        .btn-primary {
-            background: linear-gradient(to bottom, var(--accent), #fbc02d);
+        .btn-start {
+            background: var(--accent);
             border: none;
-            width: 170px; height: 170px;
+            width: 100px; height: 100px;
             border-radius: 50%;
             font-family: var(--fredoka);
-            font-size: 24px;
-            color: #444;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 6px 0 #d4a017;
             cursor: pointer;
-            box-shadow: 0 10px 0 #d4a017, 0 15px 30px rgba(0,0,0,0.2);
-            animation: pulsePlay 1.5s infinite ease-in-out;
-            transition: var(--transition-snug);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .btn-primary:active { transform: translateY(8px); box-shadow: 0 2px 0 #d4a017; }
-
-        @keyframes pulsePlay {
-            0% { transform: scale(1); box-shadow: 0 10px 0 #d4a017, 0 15px 30px rgba(0,0,0,0.2); }
-            50% { transform: scale(1.05); box-shadow: 0 10px 0 #d4a017, 0 20px 40px rgba(0,0,0,0.3); }
-            100% { transform: scale(1); box-shadow: 0 10px 0 #d4a017, 0 15px 30px rgba(0,0,0,0.2); }
         }
 
-        .controls-hint { margin-top: 20px; font-weight: 900; color: var(--primary); text-transform: uppercase; }
-        .game-over-title { font-family: var(--fredoka); color: var(--secondary); font-size: 2.2rem; margin-bottom: 5px; }
-        .stat-group { display: flex; gap: 10px; align-items: center; margin: 15px 0; }
-        .stat-group .label { font-weight: bold; font-size: 1.2rem; color: var(--text-light); }
-        .stat-group .val { color: var(--high-score); font-size: 3rem; font-family: var(--nunito); }
-
-        /* --- CONTROLES TÁCTILES --- */
-        .touch-controls {
-            display: none;
-            width: 100%;
-            max-width: 400px;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-            padding: 10px;
-        }
-
-        .t-btn {
-            background: white;
-            border: 2px solid var(--primary);
-            border-bottom: 5px solid var(--primary);
-            border-radius: 15px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: var(--primary);
-            touch-action: manipulation;
-            user-select: none;
-        }
-
-        .t-btn:active {
-            transform: translateY(3px);
-            border-bottom-width: 2px;
-            background: #f0f7ff;
-        }
-
-        .t-btn.btn-rotate { background: var(--accent); border-color: #d4a017; color: white; }
-
-        .app-footer {
-            width: 100%;
-            padding: 20px 0;
-            background: white;
-            border-top: 1px solid #ddd;
+        /* Instrucción visual rápida */
+        .hint {
+            position: fixed;
+            bottom: 20px;
+            color: var(--text);
+            font-size: 0.8rem;
+            opacity: 0.6;
             text-align: center;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            font-weight: bold;
-            z-index: 20;
-            position: relative;
-        }
-
-        /* --- RESPONSIVE PRO --- */
-        @media (max-width: 900px) {
-            #game-master { flex-direction: column; align-items: center; padding: 15px; }
-            .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .widget { width: 140px; padding: 10px; }
-            .glossary-widget { width: 100%; max-width: 400px; border-top: 5px solid var(--accent); border-left: none; }
-            .controls-widget { display: none; } /* Escondemos instrucciones teclado en móvil */
-            .touch-controls { display: grid; } /* Mostramos botones táctiles */
-        }
-
-        @media (max-width: 500px) {
-            .b-letter { width: 25px; height: 25px; font-size: 16px; }
-            .sea-title { font-size: 0.9rem; }
-            canvas#tetris { max-height: 55vh; }
-            .widget { padding: 8px; width: 120px; }
-            .val { font-size: 1.5rem; }
-            .btn-primary { width: 130px; height: 130px; font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-<canvas id="bgCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;"></canvas>
-
 <header class="app-header">
     <div class="header-container">
-        <img src="logo2.jpg" class="app-logo" alt="Logo Escuela Santa Eugenia">
-        <div class="title-container">
-            <div class="block-title" id="mainTitle"></div>
-            <div class="sea-title">Semana de la Educación Artística 2026</div>
-        </div>
+        <img src="logo2.jpg" class="app-logo" alt="Logo">
+        <div style="font-family: var(--fredoka); color: var(--primary)">TETRIS MUSICAL</div>
         <img src="logo_header.png" class="app-logo" alt="Logo SEA">
     </div>
 </header>
 
-<main class="app-main">
-    <div id="game-master">
-        
-        <aside class="side-panel left-panel">
-            <div class="widget">
-                <h3>SIGUIENTE</h3>
-                <canvas id="nextCanvas" width="100" height="100"></canvas>
-            </div>
-            <div class="widget glossary-widget" id="glossary-card">
-                <div id="glossary-icon"></div>
-                <h3 id="glossary-name">Glosario</h3>
-                <p id="glossary-desc">¡Encuentra las notas!</p>
-            </div>
-        </aside>
-
-        <div id="game-board-container">
-            <div id="overlay" class="game-overlay">
-                <button class="btn-primary start-button" onclick="initGame()">INICIAR<br>SINFONÍA</button>
-                <p class="controls-hint">¡Usa las flechas o botones!</p>
-            </div>
-            <div id="game-over-overlay" class="game-overlay" style="display: none;">
-                <h2 class="game-over-title">¡FIN DEL<br>CONCIERTO!</h2>
-                <div class="stat-group">
-                    <span class="label">Puntos:</span>
-                    <span id="final-score" class="val">0</span>
-                </div>
-                <button class="btn-primary start-button re-start" style="width: 120px; height: 120px; font-size: 16px;" onclick="initGame()">REINTENTAR</button>
-            </div>
-            <div id="canvas-wrapper">
-                <canvas id="tetris" width="300" height="600"></canvas>
-            </div>
+<main id="game-master">
+    <div id="game-board-container">
+        <div id="overlay" class="game-overlay">
+            <button class="btn-start" onclick="initGame()">JUGAR</button>
         </div>
-
-        <aside class="side-panel right-panel">
-            <div class="widget">
-                <h3>PUNTOS</h3>
-                <div id="score" class="val">0</div>
-            </div>
-            <div class="widget tempo-widget">
-                <h3>TEMPO</h3>
-                <div id="tempo-label" class="val" style="font-size: 1.2rem;">Largo</div>
-            </div>
-            <div class="widget" id="high-score-card" style="border-color: var(--high-score);">
-                <h3>RÉCORD</h3>
-                <div id="high-score" class="val" style="color: var(--high-score);">0</div>
-            </div>
-        </aside>
-
+        <canvas id="tetris" width="240" height="480"></canvas>
     </div>
 
-    <!-- BOTONERA TÁCTIL (Solo visible en móviles) -->
-    <div class="touch-controls">
-        <button class="t-btn" id="t-left">←</button>
-        <button class="t-btn btn-rotate" id="t-up">↻</button>
-        <button class="t-btn" id="t-right">→</button>
-        <div></div> <!-- Espacio -->
-        <button class="t-btn" id="t-down">↓</button>
-        <div></div> <!-- Espacio -->
-    </div>
+    <aside class="side-panel">
+        <div class="widget">
+            <h3>PUNTOS</h3>
+            <div id="score" class="val">0</div>
+        </div>
+        <div class="widget">
+            <h3>SIGUIENTE</h3>
+            <canvas id="nextCanvas" width="60" height="60"></canvas>
+        </div>
+    </aside>
 </main>
 
-<footer class="app-footer">
-    <div class="footer-content">
-        © 2026 Escuela Santa Eugenia - Chimbarongo
-    </div>
-</footer>
+<div class="hint">Arrastra para mover • Toca para rotar</div>
 
 <script>
 (() => {
-    const config = {
-        arena: { width: 10, height: 20, blockSize: 30 },
-        symbols: [null, '♪', '♫', '♩', '♬', '♭', '♮', '♯'],
-        colors: [null, '#4a90e2', '#e67e22', '#f1c40f', '#2ecc71', '#e74c3c', '#9b59b6', '#34495e'],
-        tempos: ["Largo", "Adagio", "Andante", "Allegro", "Presto", "Vivace"],
-        glossary: {
-            1: { name: 'Corchea', desc: 'Dura medio tiempo. ¡Salta como un latido!' },
-            2: { name: 'Doble Corchea', desc: 'Dos notas rápidas juntas.' },
-            3: { name: 'Negra', desc: 'Es la unidad de tiempo base de la música.' },
-            4: { name: 'Semicorcheas', desc: 'Cuatro notas muy veloces agrupadas.' },
-            5: { name: 'Bemol', desc: 'Altera el sonido bajándolo un semitono.' },
-            6: { name: 'Becuadro', desc: 'Anula las alteraciones anteriores.' },
-            7: { name: 'Sostenido', desc: 'Altera el sonido subiéndolo un semitono.' }
-        }
-    };
-
-    let audioCtx;
-    let isSoundOn = true;
-
-    function playNote(freq, type = 'triangle', duration = 0.15) {
-        if (!isSoundOn || !gameRunning) return;
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-    }
-
-    const generateBlockTitle = () => {
-        const titleArr = "TETRISMUSICAL".split('');
-        const titleDiv = document.getElementById('mainTitle');
-        titleDiv.innerHTML = ''; 
-        titleArr.forEach((char, i) => {
-            const span = document.createElement('div');
-            span.className = 'b-letter';
-            span.innerText = char;
-            span.style.backgroundColor = config.colors[(i % 7) + 1];
-            span.style.animationDelay = `${i * 0.1}s`;
-            titleDiv.appendChild(span);
-        });
-    };
-
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
     const nextCanvas = document.getElementById('nextCanvas');
     const nCtx = nextCanvas.getContext('2d');
+    
+    context.scale(24, 24);
+    nCtx.scale(15, 15);
 
-    context.scale(config.arena.blockSize, config.arena.blockSize);
-    nCtx.scale(25, 25);
+    const colors = [null, '#4a90e2', '#e67e22', '#f1c40f', '#2ecc71', '#e74c3c', '#9b59b6', '#34495e'];
+    const symbols = [null, '♪', '♫', '♩', '♬', '♭', '♮', '♯'];
 
     function createPiece(type) {
         if (type === 'I') return [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]];
         if (type === 'L') return [[0, 2, 0], [0, 2, 0], [0, 2, 2]];
         if (type === 'J') return [[0, 3, 0], [0, 3, 0], [3, 3, 0]];
         if (type === 'O') return [[4, 4], [4, 4]];
-        if (type === 'Z') return [[5, 5, 0], [0, 5, 5], [0, 0, 0]];
-        if (type === 'S') return [[0, 6, 6], [6, 6, 0], [0, 0, 0]];
         if (type === 'T') return [[0, 7, 0], [7, 7, 7], [0, 0, 0]];
+        return [[5, 5, 0], [0, 5, 5], [0, 0, 0]];
+    }
+
+    const arena = Array.from({length: 20}, () => Array(10).fill(0));
+    const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
+
+    function draw() {
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        drawMatrix(arena, {x: 0, y: 0}, context);
+        drawMatrix(player.matrix, player.pos, context);
     }
 
     function drawMatrix(matrix, offset, ctx) {
         matrix.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value !== 0) {
-                    ctx.fillStyle = config.colors[value];
-                    ctx.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                    ctx.fillStyle = colors[value];
+                    ctx.fillRect(x + offset.x, y + offset.y, 0.9, 0.9);
                     ctx.fillStyle = 'white';
-                    ctx.font = '700 0.7px "Nunito"'; 
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(config.symbols[value], x + offset.x + 0.5, y + offset.y + 0.5);
+                    ctx.font = '0.6px Arial';
+                    ctx.fillText(symbols[value], x + offset.x + 0.2, y + offset.y + 0.7);
                 }
             });
         });
@@ -488,25 +216,14 @@
         return false;
     }
 
-    function arenaSweep() {
-        let linesThisTurn = 0;
-        outer: for (let y = arena.length - 1; y > 0; --y) {
-            for (let x = 0; x < arena[y].length; ++x) {
-                if (arena[y][x] === 0) continue outer;
-            }
-            arena.splice(y, 1)[0].fill(0);
-            arena.unshift(new Array(config.arena.width).fill(0));
-            ++y;
-            linesThisTurn++;
-        }
-        
-        if (linesThisTurn > 0) {
-            player.score += linesThisTurn * 10;
-            updateStats();
-            playNote(880, 'sine', 0.4); 
-            const board = document.getElementById('game-board-container');
-            board.classList.add('flash-active');
-            setTimeout(() => board.classList.remove('flash-active'), 350);
+    function playerReset() {
+        const pieces = 'ILJOTSZ';
+        player.matrix = createPiece(pieces[Math.random() * pieces.length | 0]);
+        player.pos.y = 0;
+        player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+        if (collide(arena, player)) {
+            gameRunning = false;
+            document.getElementById('overlay').style.display = 'flex';
         }
     }
 
@@ -515,171 +232,94 @@
         if (collide(arena, player)) {
             player.pos.y--;
             merge(arena, player);
-            playNote(220, 'square', 0.05); 
             playerReset();
             arenaSweep();
         }
         dropCounter = 0;
     }
 
-    function playerMove(dir) {
-        player.pos.x += dir;
-        if (collide(arena, player)) player.pos.x -= dir;
-        else playNote(440); 
+    function arenaSweep() {
+        outer: for (let y = arena.length - 1; y > 0; --y) {
+            for (let x = 0; x < arena[y].length; ++x) {
+                if (arena[y][x] === 0) continue outer;
+            }
+            arena.splice(y, 1)[0].fill(0);
+            arena.unshift(new Array(10).fill(0));
+            player.score += 10;
+        }
+        document.getElementById('score').innerText = player.score;
     }
 
     function playerRotate() {
-        const pos = player.pos.x;
-        let offset = 1;
         const matrix = player.matrix;
         for (let y = 0; y < matrix.length; ++y) {
             for (let x = 0; x < y; ++x) [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
         }
         matrix.forEach(row => row.reverse());
-        while (collide(arena, player)) {
-            player.pos.x += offset;
-            offset = -(offset + (offset > 0 ? 1 : -1));
-            if (offset > matrix[0].length) { player.pos.x = pos; return; }
-        }
-        playNote(523, 'triangle', 0.1); 
+        if (collide(arena, player)) matrix.forEach(row => row.reverse()); // Deshacer si choca
     }
 
-    let nextPiece = createPiece('ILJOTSZ'[Math.floor(Math.random() * 7)]);
-
-    function playerReset() {
-        const pieces = 'ILJOTSZ';
-        player.matrix = nextPiece;
-        nextPiece = createPiece(pieces[Math.floor(Math.random() * pieces.length)]);
-        player.pos.y = 0;
-        player.pos.x = (config.arena.width / 2 | 0) - (player.matrix[0].length / 2 | 0);
-        
-        if (collide(arena, player)) {
-            gameRunning = false;
-            document.getElementById('game-over-overlay').style.display = 'flex';
-            document.getElementById('final-score').innerText = player.score;
-            if (player.score > highScore) {
-                highScore = player.score;
-                localStorage.setItem('tetrisMusicalHighScore', highScore);
-                document.getElementById('high-score').innerText = highScore;
-            }
-        }
-        drawNextDisplay();
-    }
-
-    function drawNextDisplay() {
-        nCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-        drawMatrix(nextPiece, {x: 1, y: 1}, nCtx);
-        const id = nextPiece.flat().find(v => v > 0) || 1;
-        const icon = document.getElementById('glossary-icon');
-        icon.innerText = config.symbols[id];
-        icon.style.color = config.colors[id];
-        icon.classList.add('icon-bounce');
-        setTimeout(() => icon.classList.remove('icon-bounce'), 600);
-        document.getElementById('glossary-name').innerText = config.glossary[id].name;
-        document.getElementById('glossary-desc').innerText = config.glossary[id].desc;
-    }
-
-    let dropCounter = 0, dropInterval = 1000, lastTime = 0, gameRunning = false;
-    let highScore = localStorage.getItem('tetrisMusicalHighScore') || 0;
-    document.getElementById('high-score').innerText = highScore;
-
-    function draw() {
-        context.fillStyle = '#fff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.strokeStyle = '#f1f1f1';
-        context.lineWidth = 0.05;
-        for(let i=0; i<config.arena.height; i+=2) {
-            context.beginPath(); context.moveTo(0, i); context.lineTo(10, i); context.stroke();
-        }
-        drawMatrix(arena, {x: 0, y: 0}, context);
-        drawMatrix(player.matrix, player.pos, context);
-    }
-
+    let dropCounter = 0, lastTime = 0, gameRunning = false;
     function update(time = 0) {
         if (!gameRunning) return;
         const deltaTime = time - lastTime;
         lastTime = time;
         dropCounter += deltaTime;
-        if (dropCounter > dropInterval) playerDrop();
+        if (dropCounter > 1000) playerDrop();
         draw();
         requestAnimationFrame(update);
     }
 
-    function updateStats() {
-        document.getElementById('score').innerText = player.score;
-        const tNames = config.tempos;
-        const idx = Math.min(tNames.length - 1, Math.floor(player.score / 150));
-        document.getElementById('tempo-label').innerText = tNames[idx];
-        dropInterval = Math.max(150, 1000 - (player.score * 5));
-    }
-
-    const arena = Array.from({length: config.arena.height}, () => Array(config.arena.width).fill(0));
-    const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
-
-    generateBlockTitle();
-
     window.initGame = () => {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('game-over-overlay').style.display = 'none';
         arena.forEach(row => row.fill(0));
         player.score = 0;
-        updateStats();
         playerReset();
         gameRunning = true;
-        lastTime = performance.now();
+        document.getElementById('overlay').style.display = 'none';
         update();
     };
 
-    // Eventos de Teclado
-    window.addEventListener('keydown', e => {
-        if (gameRunning) {
-            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight", " "].indexOf(e.key) > -1) e.preventDefault();
-            if (e.key === 'ArrowLeft') playerMove(-1);
-            if (e.key === 'ArrowRight') playerMove(1);
-            if (e.key === 'ArrowDown') playerDrop();
-            if (e.key === 'ArrowUp') playerRotate();
+    // --- LÓGICA DE ARRASTRE Y TOQUE ---
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let initialPieceX = 0;
+
+    canvas.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        initialPieceX = player.pos.x;
+    }, {passive: false});
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (!gameRunning) return;
+        e.preventDefault();
+        
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        
+        // Calcular movimiento horizontal (arrastre)
+        const diffX = touchX - touchStartX;
+        const stepX = Math.floor(diffX / 30); // Sensibilidad del arrastre
+        
+        const oldX = player.pos.x;
+        player.pos.x = initialPieceX + stepX;
+        if (collide(arena, player)) player.pos.x = oldX;
+
+        // Aceleración hacia abajo
+        if (touchY - touchStartY > 50) playerDrop();
+    }, {passive: false});
+
+    canvas.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+
+        // Si el dedo apenas se movió, es un TAP (Rotar)
+        if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
+            playerRotate();
         }
-        if (e.key.toLowerCase() === 'p') isSoundOn = !isSoundOn;
     });
 
-    // --- LOGICA TÁCTIL ---
-    const addTouchEvt = (id, fn) => {
-        const el = document.getElementById(id);
-        el.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if(gameRunning) fn();
-        }, {passive: false});
-    };
-
-    addTouchEvt('t-left', () => playerMove(-1));
-    addTouchEvt('t-right', () => playerMove(1));
-    addTouchEvt('t-up', () => playerRotate());
-    addTouchEvt('t-down', () => playerDrop());
-
-    // Pentagrama Animado de Fondo
-    const bgCanvas = document.getElementById('bgCanvas');
-    if(bgCanvas) {
-        const bCtx = bgCanvas.getContext('2d');
-        const resize = () => { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; };
-        window.onresize = resize; resize();
-        const notes = Array.from({length: 20}, () => ({
-            x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
-            s: Math.random() * 1.5 + 0.5, char: config.symbols[Math.floor(Math.random() * 7) + 1]
-        }));
-        const drawBG = () => {
-            bCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
-            bCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            bCtx.font = '30px "Nunito"';
-            notes.forEach(n => {
-                bCtx.fillText(n.char, n.x, n.y);
-                n.y -= n.s; if(n.y < -50) n.y = bgCanvas.height + 50;
-            });
-            requestAnimationFrame(drawBG);
-        }
-        drawBG();
-    }
 })();
 </script>
-
 </body>
 </html>
